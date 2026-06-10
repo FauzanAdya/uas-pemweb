@@ -11,7 +11,6 @@ class AuthController {
         $this->adminModel = new AdminModel();
     }
 
-    // Tampilkan halaman login
     public function login() {
         if (isLoggedIn()) {
             header('Location: index.php?page=dashboard');
@@ -20,7 +19,6 @@ class AuthController {
         require_once __DIR__ . '/../views/login.php';
     }
 
-    // Proses login
     public function prosesLogin() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?page=login');
@@ -51,7 +49,6 @@ class AuthController {
         exit;
     }
 
-    // Logout
     public function logout() {
         session_destroy();
         header('Location: index.php?page=login');

@@ -11,7 +11,6 @@ class StokController {
         $this->stokModel = new StokModel();
     }
 
-    // Tampilkan daftar semua stok bahan
     public function index() {
         cekLogin();
         $stok         = $this->stokModel->getAll();
@@ -19,13 +18,11 @@ class StokController {
         require_once __DIR__ . '/../views/admin/stok_list.php';
     }
 
-    // Form tambah bahan baru
     public function tambah() {
         cekLogin();
         require_once __DIR__ . '/../views/admin/stok_form.php';
     }
 
-    // Proses simpan bahan baru
     public function simpan() {
         cekLogin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -38,32 +35,20 @@ class StokController {
         $satuan       = trim($_POST['satuan'] ?? '');
         $stok_minimum = (int)($_POST['stok_minimum'] ?? 5);
 
-        if (empty($nama_bahan) || $jumlah < 0) {
-            $_SESSION['error'] = 'Nama bahan dan jumlah wajib diisi.';
+        if (empty($nama_bahan)) {
+            $_SESSION['error'] = 'Nama bahan wajib diisi.';
             header('Location: index.php?page=stok_tambah');
             exit;
         }
 
-        $data = [
-            'nama_bahan'   => $nama_bahan,
-            'jumlah'       => $jumlah,
-            'satuan'       => $satuan,
-            'stok_minimum' => $stok_minimum,
-        ];
-
-        $hasil = $this->stokModel->simpan($data);
-
-        if ($hasil) {
-            $_SESSION['sukses'] = 'Bahan ' . $nama_bahan . ' berhasil ditambahkan.';
-        } else {
-            $_SESSION['error'] = 'Gagal menambahkan bahan.';
-        }
-
+        $hasil = $this->stokModel->simpan(compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum'));
+        $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil
+            ? 'Bahan berhasil ditambahkan.'
+            : 'Gagal menambahkan bahan.';
         header('Location: index.php?page=stok');
         exit;
     }
 
-    // Form edit stok bahan
     public function edit($id) {
         cekLogin();
         $bahan = $this->stokModel->getById($id);
@@ -75,7 +60,6 @@ class StokController {
         require_once __DIR__ . '/../views/admin/stok_form.php';
     }
 
-    // Proses update stok bahan
     public function update() {
         cekLogin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -89,42 +73,20 @@ class StokController {
         $satuan       = trim($_POST['satuan'] ?? '');
         $stok_minimum = (int)($_POST['stok_minimum'] ?? 5);
 
-        if (!$id || empty($nama_bahan)) {
-            $_SESSION['error'] = 'Data tidak lengkap.';
-            header('Location: index.php?page=stok');
-            exit;
-        }
-
-        $data = [
-            'nama_bahan'   => $nama_bahan,
-            'jumlah'       => $jumlah,
-            'satuan'       => $satuan,
-            'stok_minimum' => $stok_minimum,
-        ];
-
-        $hasil = $this->stokModel->update($id, $data);
-
-        if ($hasil) {
-            $_SESSION['sukses'] = 'Stok bahan berhasil diperbarui.';
-        } else {
-            $_SESSION['error'] = 'Gagal memperbarui stok.';
-        }
-
+        $hasil = $this->stokModel->update($id, compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum'));
+        $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil
+            ? 'Stok berhasil diperbarui.'
+            : 'Gagal memperbarui stok.';
         header('Location: index.php?page=stok');
         exit;
     }
 
-    // Hapus bahan dari stok
     public function hapus($id) {
         cekLogin();
         $hasil = $this->stokModel->hapus($id);
-
-        if ($hasil) {
-            $_SESSION['sukses'] = 'Bahan berhasil dihapus dari stok.';
-        } else {
-            $_SESSION['error'] = 'Gagal menghapus bahan.';
-        }
-
+        $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil
+            ? 'Bahan berhasil dihapus.'
+            : 'Gagal menghapus bahan.';
         header('Location: index.php?page=stok');
         exit;
     }

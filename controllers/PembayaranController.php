@@ -2,16 +2,19 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/PembayaranModel.php';
 require_once __DIR__ . '/../models/PesananModel.php';
+require_once __DIR__ . '/../models/KeuanganModel.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 
 class PembayaranController {
 
     private $pembayaranModel;
     private $pesananModel;
+    private $keuanganModel;
 
     public function __construct() {
         $this->pembayaranModel = new PembayaranModel();
         $this->pesananModel    = new PesananModel();
+        $this->keuanganModel   = new KeuanganModel();
     }
 
     public function index() {
@@ -40,7 +43,7 @@ class PembayaranController {
         }
         $id         = (int)($_POST['id'] ?? 0);
         $pembayaran = $this->pembayaranModel->getById($id);
-        $hasil      = $this->pembayaranModel->konfirmasi($id);
+        $hasil      = $this->pembayaranModel->konfirmasi($id, $_SESSION['admin_id']); // FK diverifikasi_oleh
 
         if ($hasil) {
             $isLunas = $pembayaran['tipe_bayar'] === 'lunas';
@@ -64,7 +67,7 @@ class PembayaranController {
         }
         $id     = (int)($_POST['id'] ?? 0);
         $alasan = trim($_POST['alasan'] ?? '');
-        $hasil  = $this->pembayaranModel->tolak($id, $alasan);
+        $hasil  = $this->pembayaranModel->tolak($id, $alasan, $_SESSION['admin_id']); // FK diverifikasi_oleh
 
         if ($hasil) {
             $pembayaran = $this->pembayaranModel->getById($id);
@@ -106,6 +109,18 @@ class PembayaranController {
         if ($hasil) {
             $this->pembayaranModel->updateStatusBayarPesanan($pesananId, 'lunas');
             $this->pesananModel->ubahStatus($pesananId, 'selesai');
+
+            // Catat pemasukan ke tabel keuangan
+            $pesanan = $this->pesananModel->getById($pesananId);
+            $this->keuanganModel->simpanTransaksi([
+                'keterangan'   => 'Pesanan #' . $pesananId . ' - ' . $pesanan['nama_pemesan'] . ' (Lunas via COD)',
+                'jumlah'       => $pesanan['total_harga'],
+                'tipe'         => 'masuk',
+                'tanggal'      => $tanggalCod,
+                'pesanan_id'   => $pesananId,            // FK ke tabel pesanan
+                'dicatat_oleh' => $_SESSION['admin_id'], // FK ke tabel admin
+            ]);
+
             $_SESSION['sukses'] = '✅ Pelunasan COD berhasil dicatat. Pesanan ditandai Lunas & Selesai.';
         } else {
             $_SESSION['error'] = 'Gagal mencatat pelunasan COD.';

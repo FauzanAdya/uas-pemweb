@@ -1,14 +1,17 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/PesananModel.php';
+require_once __DIR__ . '/../models/KeuanganModel.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 
 class PesananController {
 
     private $pesananModel;
+    private $keuanganModel;
 
     public function __construct() {
-        $this->pesananModel = new PesananModel();
+        $this->pesananModel  = new PesananModel();
+        $this->keuanganModel = new KeuanganModel();
     }
 
     public function index() {
@@ -48,6 +51,19 @@ class PesananController {
         $hasil = $this->pesananModel->ubahStatus($id, $status);
         if ($hasil) {
             $_SESSION['sukses'] = 'Status pesanan berhasil diubah menjadi ' . ucfirst($status) . '.';
+
+            // Jika status diubah menjadi "selesai", catat sebagai pemasukan di tabel keuangan
+            if ($status === 'selesai') {
+                $pesanan = $this->pesananModel->getById($id);
+                $this->keuanganModel->simpanTransaksi([
+                    'keterangan'   => 'Pesanan #' . $id . ' - ' . $pesanan['nama_pemesan'],
+                    'jumlah'       => $pesanan['total_harga'],
+                    'tipe'         => 'masuk',
+                    'tanggal'      => date('Y-m-d'),
+                    'pesanan_id'   => $id,                   // FK ke tabel pesanan
+                    'dicatat_oleh' => $_SESSION['admin_id'], // FK ke tabel admin
+                ]);
+            }
         } else {
             $_SESSION['error'] = 'Gagal mengubah status pesanan.';
         }

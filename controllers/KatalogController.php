@@ -56,11 +56,12 @@ class KatalogController {
         }
 
         $hasil = $this->katalogModel->simpan([
-            'nama'        => $nama,
-            'deskripsi'   => $deskripsi,
-            'harga_dasar' => $harga_dasar,
-            'kategori'    => $kategori,
-            'foto'        => $namaFoto,
+            'nama'             => $nama,
+            'deskripsi'        => $deskripsi,
+            'harga_dasar'      => $harga_dasar,
+            'kategori'         => $kategori,
+            'foto'             => $namaFoto,
+            'ditambahkan_oleh' => $_SESSION['admin_id'], // FK ke tabel admin
         ]);
 
         $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil

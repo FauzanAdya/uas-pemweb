@@ -41,7 +41,8 @@ class StokController {
             exit;
         }
 
-        $hasil = $this->stokModel->simpan(compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum'));
+        $diupdate_oleh = $_SESSION['admin_id']; // FK ke tabel admin
+        $hasil = $this->stokModel->simpan(compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum', 'diupdate_oleh'));
         $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil
             ? 'Bahan berhasil ditambahkan.'
             : 'Gagal menambahkan bahan.';
@@ -73,7 +74,8 @@ class StokController {
         $satuan       = trim($_POST['satuan'] ?? '');
         $stok_minimum = (int)($_POST['stok_minimum'] ?? 5);
 
-        $hasil = $this->stokModel->update($id, compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum'));
+        $diupdate_oleh = $_SESSION['admin_id']; // FK ke tabel admin
+        $hasil = $this->stokModel->update($id, compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum', 'diupdate_oleh'));
         $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil
             ? 'Stok berhasil diperbarui.'
             : 'Gagal memperbarui stok.';

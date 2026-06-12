@@ -42,10 +42,12 @@ class KeuanganController {
         }
 
         $hasil = $this->keuanganModel->simpanTransaksi([
-            'keterangan' => $keterangan,
-            'jumlah'     => $jumlah,
-            'tipe'       => 'keluar',
-            'tanggal'    => $tanggal,
+            'keterangan'   => $keterangan,
+            'jumlah'       => $jumlah,
+            'tipe'         => 'keluar',
+            'tanggal'      => $tanggal,
+            'pesanan_id'   => null,                  // pengeluaran manual, tidak terkait pesanan
+            'dicatat_oleh' => $_SESSION['admin_id'], // FK ke tabel admin
         ]);
 
         $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil

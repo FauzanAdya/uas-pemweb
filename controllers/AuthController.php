@@ -3,23 +3,27 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/AdminModel.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 
-class AuthController {
-
+class AuthController
+{
     private $adminModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->adminModel = new AdminModel();
     }
 
-    public function login() {
+    public function login()
+    {
         if (isLoggedIn()) {
             header('Location: index.php?page=dashboard');
             exit;
         }
+
         require_once __DIR__ . '/../views/login.php';
     }
 
-    public function prosesLogin() {
+    public function prosesLogin()
+    {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?page=login');
             exit;
@@ -36,10 +40,13 @@ class AuthController {
 
         $admin = $this->adminModel->cariByUsername($username);
 
-        if ($admin && password_verify($password, $admin['password'])) {
-            $_SESSION['admin_id']   = $admin['id'];
+        // LOGIN DENGAN PASSWORD PLAIN TEXT
+        if ($admin && $password === $admin['password']) {
+
+            $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_nama'] = $admin['nama'];
-            $_SESSION['loggedin']   = true;
+            $_SESSION['loggedin'] = true;
+
             header('Location: index.php?page=dashboard');
             exit;
         }
@@ -49,8 +56,25 @@ class AuthController {
         exit;
     }
 
-    public function logout() {
+    public function logout()
+    {
+        $_SESSION = [];
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
         session_destroy();
+
         header('Location: index.php?page=login');
         exit;
     }

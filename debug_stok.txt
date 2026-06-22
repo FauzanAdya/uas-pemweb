@@ -1,0 +1,38 @@
+2026-06-20 04:29:29 | kodeList: []
+  hasil berkurang: []
+
+2026-06-20 11:36:00 | kodeList: []
+  hasil berkurang: []
+
+2026-06-20 18:06:03 | kodeList: ["pink","bunga_artifisial","coklat"]
+  kode: pink | cocok: [{"id":1,"nama_bahan":"Kertas Wrap Pink","kode_bahan":"pink","jumlah":18,"satuan":"lembar","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-20 09:31:43"}]
+  kode: bunga_artifisial | cocok: [{"id":7,"nama_bahan":"Bunga Mawar Artifisial","kode_bahan":"bunga_artifisial","jumlah":50,"satuan":"buah","stok_minimum":15,"diupdate_oleh":1,"updated_at":"2026-06-19 12:54:35"}]
+  kode: coklat | cocok: [{"id":12,"nama_bahan":"Coklat Hiasan","kode_bahan":"coklat","jumlah":25,"satuan":"buah","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-19 12:54:35"}]
+  hasil berkurang: ["Kertas Wrap Pink","Bunga Mawar Artifisial","Coklat Hiasan"]
+
+2026-06-20 18:12:28 | kodeList: ["putih","bunga_segar","boneka"]
+  kode: putih | cocok: [{"id":2,"nama_bahan":"Kertas Wrap Putih","kode_bahan":"putih","jumlah":15,"satuan":"lembar","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-19 12:54:35"}]
+  kode: bunga_segar | cocok: [{"id":8,"nama_bahan":"Bunga Segar","kode_bahan":"bunga_segar","jumlah":20,"satuan":"buah","stok_minimum":10,"diupdate_oleh":1,"updated_at":"2026-06-19 12:54:35"}]
+  kode: boneka | cocok: [{"id":13,"nama_bahan":"Boneka Kecil","kode_bahan":"boneka","jumlah":10,"satuan":"buah","stok_minimum":3,"diupdate_oleh":1,"updated_at":"2026-06-19 12:54:35"}]
+  hasil berkurang: ["Kertas Wrap Putih","Bunga Segar","Boneka Kecil"]
+
+2026-06-21 06:54:36 | kodeList: ["biru","kombinasi"]
+  kode: biru | cocok: [{"id":3,"nama_bahan":"Kertas Wrap Biru","kode_bahan":"biru","jumlah":10,"satuan":"lembar","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-19 12:54:35"}]
+  kode: kombinasi | cocok: [{"id":14,"nama_bahan":"HP","kode_bahan":"kombinasi","jumlah":10,"satuan":"buah","stok_minimum":1,"diupdate_oleh":1,"updated_at":"2026-06-21 11:40:15"}]
+  hasil berkurang: ["Kertas Wrap Biru","HP"]
+
+2026-06-22 08:15:30 | kodeList: ["biru","boneka"]
+  kode: biru | cocok: [{"id":3,"nama_bahan":"Kertas Wrap Biru","kode_bahan":"biru","jumlah":9,"satuan":"lembar","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-21 11:54:36"}]
+  kode: boneka | cocok: [{"id":13,"nama_bahan":"Boneka Kecil","kode_bahan":"boneka","jumlah":9,"satuan":"buah","stok_minimum":3,"diupdate_oleh":1,"updated_at":"2026-06-20 23:12:28"}]
+  hasil berkurang: ["Kertas Wrap Biru","Boneka Kecil"]
+
+2026-06-22 08:43:35 | kodeList: ["biru","boneka"]
+  kode: biru | cocok: [{"id":3,"nama_bahan":"Kertas Wrap Biru","kode_bahan":"biru","jumlah":8,"satuan":"lembar","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-22 13:15:30"}]
+  kode: boneka | cocok: [{"id":13,"nama_bahan":"Boneka Kecil","kode_bahan":"boneka","jumlah":8,"satuan":"buah","stok_minimum":3,"diupdate_oleh":1,"updated_at":"2026-06-22 13:15:30"}]
+  hasil berkurang: ["Kertas Wrap Biru","Boneka Kecil"]
+
+2026-06-22 15:39:38 | kodeList: ["putih","boneka"]
+  kode: putih | cocok: [{"id":2,"nama_bahan":"Kertas Wrap Putih","kode_bahan":"putih","jumlah":14,"satuan":"lembar","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-20 23:12:28"}]
+  kode: boneka | cocok: [{"id":13,"nama_bahan":"Boneka Kecil","kode_bahan":"boneka","jumlah":7,"satuan":"buah","stok_minimum":3,"diupdate_oleh":1,"updated_at":"2026-06-22 13:43:35"}]
+  hasil berkurang: ["Kertas Wrap Putih","Boneka Kecil"]
+

@@ -1,15 +1,18 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
 <?php require_once __DIR__ . '/../layouts/sidebar.php'; ?>
+<?php
+/** @var int $pesananHariIni */
+/** @var array $belumLunas */
+/** @var array $segeraDikirim */
+/** @var array $rekapBulanIni */
+/** @var array $semuaPesanan */
+?>
 <div class="flex-grow-1 p-4">
     <h4 class="fw-bold mb-4">Dashboard Admin</h4>
-    <?php if (!empty($_SESSION['sukses'])): ?>
+    <?php 
+    if (!empty($_SESSION['sukses'])): ?>
         <div class="alert alert-success"><?= $_SESSION['sukses']; unset($_SESSION['sukses']); ?></div>
-    <?php
-    /** @var int $pesananHariIni */ 
-    /** @var array $belumLunas */ 
-    /** @var array $segeraDikirim */ 
-    /** @var array $rekapBulanIni */ 
-    endif; ?>
+    <?php endif; ?>
 
     <!-- Kartu Ringkasan -->
     <div class="row g-3 mb-4">
@@ -58,9 +61,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                 /** @var array $semuaPesanan */ 
-                foreach ($semuaPesanan as $i => $p): 
+                <?php foreach ($semuaPesanan as $i => $p): 
                     // Buat pesan WA otomatis
                     $noWA  = preg_replace('/^0/', '62', $p['no_wa']);
                     $noWA  = preg_replace('/[^0-9]/', '', $noWA);
@@ -151,7 +152,7 @@
                     <td>
                         <a href="https://wa.me/<?= $noWA2 ?>?text=<?= $pesanSiap ?>" target="_blank"
                            class="btn btn-sm fw-semibold text-white" style="background:#25D366">
-                            💬 Ingatkan Pengambilan
+                            Ingatkan Pengambilan
                         </a>
                     </td>
                 </tr>

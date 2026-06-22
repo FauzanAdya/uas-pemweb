@@ -10,7 +10,7 @@
                 </thead>
                 <tbody>
                 <?php
-                /** @var array $riwayat */  
+                /** @var array $riwayat */ 
                 foreach ($riwayat as $i => $r): ?>
                 <tr>
                     <td><?= $i+1 ?></td>

@@ -1,6 +1,3 @@
-<?php
-$katalog = $katalog ?? [];
-?>
 <?php require_once __DIR__ . '/../../config/config.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -29,7 +26,9 @@ $katalog = $katalog ?? [];
         <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
     <?php endif; ?>
     <div class="row g-3">
-    <?php foreach ($katalog as $k): ?>
+    <?php
+    /** @var array $katalog */ 
+    foreach ($katalog as $k): ?>
         <div class="col-md-4">
             <div class="card h-100">
                 <?php if ($k['foto']): ?>

@@ -7,9 +7,7 @@
     </div>
     <?php if (!empty($_SESSION['sukses'])): ?>
         <div class="alert alert-success"><?= $_SESSION['sukses']; unset($_SESSION['sukses']); ?></div>
-    <?php
-    /** @var array $katalog */ 
-    endif; ?>
+    <?php endif; ?>
     <div class="row g-3">
     <?php foreach ($katalog as $k): ?>
         <div class="col-md-4">

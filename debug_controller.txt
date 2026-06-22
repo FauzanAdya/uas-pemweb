@@ -1,0 +1,6 @@
+2026-06-20 18:06:03
+is_custom: 1
+warna_kertas: pink
+jenis_isi: bunga_artifisial
+tambahan: ["coklat"]
+

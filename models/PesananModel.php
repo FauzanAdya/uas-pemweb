@@ -71,6 +71,12 @@ class PesananModel {
         return $data;
     }
 
+    // Hitung pesanan baru/masih pending untuk badge notifikasi sidebar
+    public function getCountPesananPending() {
+        $sql = "SELECT COUNT(*) AS total FROM pesanan WHERE status = 'pending'";
+        return $this->db->query($sql)->fetch_assoc()['total'];
+    }
+
     public function getRiwayatSelesai() {
         $sql = "SELECT p.*, k.nama AS nama_produk 
                 FROM pesanan p 

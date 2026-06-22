@@ -2,7 +2,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'db_buket');
+define('DB_NAME', 'database_buket');
 
 function getDB() {
     static $conn = null;

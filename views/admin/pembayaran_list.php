@@ -1,6 +1,5 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
 <?php require_once __DIR__ . '/../layouts/sidebar.php'; ?>
-
 <div class="flex-grow-1 p-4">
     <h4 class="fw-bold mb-4">Manajemen Pembayaran</h4>
 
@@ -38,8 +37,8 @@
                             <tr><th>#</th><th>Nama Pemesan</th><th>No WA</th><th>Total</th><th>Tgl Ambil</th><th>Tgl Upload</th><th>Aksi</th></tr>
                         </thead>
                         <tbody>
-                        <?php 
-                        /** @var array $pembayaran */
+                        <?php
+                        /** @var array $pembayaran */ 
                         $dataDP = array_filter($pembayaran, fn($p) => $p['tipe_bayar'] === 'dp');
                         foreach ($dataDP as $i => $p): ?>
                         <tr>
@@ -51,7 +50,7 @@
                             <td><?= date('d/m/Y H:i', strtotime($p['tanggal_upload'])) ?></td>
                             <td>
                                 <a href="index.php?page=pembayaran&action=verifikasi&id=<?= $p['id'] ?>" class="btn btn-sm btn-warning text-dark">
-                                     Periksa DP
+                                    Periksa DP
                                 </a>
                             </td>
                         </tr>
@@ -86,7 +85,7 @@
                             <td><?= date('d/m/Y H:i', strtotime($p['tanggal_upload'])) ?></td>
                             <td>
                                 <a href="index.php?page=pembayaran&action=verifikasi&id=<?= $p['id'] ?>" class="btn btn-sm btn-success">
-                                    🔍 Periksa Lunas
+                                     Periksa Lunas
                                 </a>
                             </td>
                         </tr>

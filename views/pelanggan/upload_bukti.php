@@ -44,7 +44,7 @@
                     <strong> Pembayaran Lunas</strong><br>
                     <span class="small">Kamu memilih bayar penuh via QRIS. Tidak ada sisa pembayaran saat pengambilan.</span>
                 <?php else: ?>
-                    <strong>💳 Pembayaran DP 50%</strong><br>
+                    <strong> Pembayaran DP 50%</strong><br>
                     <span class="small">Sisa 50% dapat dibayar saat pengambilan (COD) atau transfer sebelumnya.</span>
                 <?php endif; ?>
             </div>
@@ -53,7 +53,7 @@
             <div class="mb-4">
                 <label class="form-label fw-semibold">Foto Bukti Transfer QRIS</label>
                 <div class="upload-area" onclick="document.getElementById('file-input').click()">
-                    <div style="font-size:2.5rem">📷</div>
+                    <div style="font-size:2.5rem"></div>
                     <div class="fw-semibold mt-2">Klik untuk pilih foto</div>
                     <div class="text-muted small">JPG, PNG, atau PDF — maks 2MB</div>
                     <div id="nama-file" class="mt-2 text-success small"></div>

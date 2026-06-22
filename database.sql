@@ -65,10 +65,11 @@ CREATE TABLE pembayaran (
     FOREIGN KEY (diverifikasi_oleh) REFERENCES admin(id) ON DELETE SET NULL
 );
 
--- 5. Tabel stok_bahan
+-- 5. Tabel stok_bahan (dengan kolom kode_bahan)
 CREATE TABLE stok_bahan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nama_bahan VARCHAR(100) NOT NULL,
+    kode_bahan VARCHAR(50) NULL,
     jumlah INT DEFAULT 0,
     satuan VARCHAR(20),
     stok_minimum INT DEFAULT 5,
@@ -102,25 +103,32 @@ CREATE TABLE notifikasi (
 );
 
 -- ============================================
--- DATA AWAL (SAMPLE)
+-- DATA AWAL
 -- ============================================
 
 -- Admin default (password: admin123)
 INSERT INTO admin (nama, username, password) VALUES
 ('Admin Toko Buket', 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
--- ^ password hash di atas adalah hasil dari password_hash('admin123', PASSWORD_BCRYPT)
 
 -- Contoh produk katalog
 INSERT INTO katalog (nama, deskripsi, harga_dasar, kategori, foto, ditambahkan_oleh) VALUES
-('Buket Bunga Mawar', 'Rangkaian bunga mawar segar dengan wrapping cantik', 75000, 'bunga', NULL, 1),
-('Buket Snack Coklat', 'Rangkaian snack dan coklat favorit', 65000, 'snack', NULL, 1),
-('Buket Uang 100K', 'Buket dengan rangkaian uang asli', 150000, 'uang', NULL, 1),
-('Buket Wisuda Custom', 'Buket spesial untuk wisuda, bisa custom', 90000, 'custom', NULL, 1);
+('Buket Bunga Mawar',   'Rangkaian bunga mawar segar dengan wrapping cantik', 75000,  'bunga',  NULL, 1),
+('Buket Snack Coklat',  'Rangkaian snack dan coklat favorit',                 65000,  'snack',  NULL, 1),
+('Buket Uang 100K',     'Buket dengan rangkaian uang asli',                   150000, 'uang',   NULL, 1),
+('Buket Wisuda Custom', 'Buket spesial untuk wisuda, bisa custom',            90000,  'custom', NULL, 1);
 
--- Contoh stok bahan
-INSERT INTO stok_bahan (nama_bahan, jumlah, satuan, stok_minimum, diupdate_oleh) VALUES
-('Kertas Wrap Pink', 20, 'lembar', 5, 1),
-('Kertas Wrap Putih', 15, 'lembar', 5, 1),
-('Pita Satin', 10, 'rol', 3, 1),
-('Snack Mix', 30, 'pack', 10, 1),
-('Bunga Mawar Artifisial', 50, 'buah', 15, 1);
+-- Stok bahan dengan kode_bahan
+INSERT INTO stok_bahan (nama_bahan, kode_bahan, jumlah, satuan, stok_minimum, diupdate_oleh) VALUES
+('Kertas Wrap Pink',       'pink',             20, 'lembar', 5,  1),
+('Kertas Wrap Putih',      'putih',            15, 'lembar', 5,  1),
+('Kertas Wrap Biru',       'biru',             10, 'lembar', 5,  1),
+('Kertas Wrap Ungu',       'ungu',             10, 'lembar', 5,  1),
+('Kertas Wrap Kuning',     'kuning',           10, 'lembar', 5,  1),
+('Kertas Wrap Hijau',      'hijau',            10, 'lembar', 5,  1),
+('Bunga Mawar Artifisial', 'bunga_artifisial', 50, 'buah',   15, 1),
+('Bunga Segar',            'bunga_segar',      20, 'buah',   10, 1),
+('Snack Mix',              'snack',            30, 'pack',   10, 1),
+('Uang Dekorasi',          'uang',             10, 'lembar', 3,  1),
+('Pita Satin Premium',     'pita_premium',     10, 'rol',    3,  1),
+('Coklat Hiasan',          'coklat',           25, 'buah',   5,  1),
+('Boneka Kecil',           'boneka',           10, 'buah',   3,  1);

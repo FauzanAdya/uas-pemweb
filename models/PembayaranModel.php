@@ -1,14 +1,17 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
-class PembayaranModel {
+class PembayaranModel
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = getDB();
     }
 
-    public function getAllBelumVerifikasi() {
+    public function getAllBelumVerifikasi()
+    {
         $sql = "SELECT pb.*, p.nama_pemesan, p.no_wa, p.total_harga, p.tanggal_ambil
                 FROM pembayaran pb
                 LEFT JOIN pesanan p ON pb.pesanan_id = p.id
@@ -17,21 +20,23 @@ class PembayaranModel {
         return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getById($id) {
+    public function getById($id)
+    {
         $stmt = $this->db->prepare(
             "SELECT pb.*, p.nama_pemesan, p.no_wa, p.total_harga,
-                    p.tanggal_ambil, p.ucapan, p.is_custom, p.status_bayar
-             FROM pembayaran pb
-             LEFT JOIN pesanan p ON pb.pesanan_id = p.id
-             WHERE pb.id = ? LIMIT 1"
+                p.tanggal_ambil, p.ucapan, p.is_custom, p.status_bayar,
+                p.warna_kertas, p.jenis_isi, p.tambahan
+         FROM pembayaran pb
+         LEFT JOIN pesanan p ON pb.pesanan_id = p.id
+         WHERE pb.id = ? LIMIT 1"
         );
         $stmt->bind_param("i", $id);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
-
     // Simpan bukti upload dari pelanggan
-    public function simpanBukti($pesananId, $namaFile, $tipeBayar) {
+    public function simpanBukti($pesananId, $namaFile, $tipeBayar)
+    {
         $stmt = $this->db->prepare(
             "INSERT INTO pembayaran 
              (pesanan_id, file_bukti, tipe_bayar, tanggal_upload, status_verifikasi)
@@ -42,7 +47,8 @@ class PembayaranModel {
     }
 
     // Konfirmasi pembayaran valid — FK diverifikasi_oleh diisi
-    public function konfirmasi($id, $adminId) {
+    public function konfirmasi($id, $adminId)
+    {
         $stmt = $this->db->prepare(
             "UPDATE pembayaran 
              SET status_verifikasi = 'diterima', 
@@ -55,7 +61,8 @@ class PembayaranModel {
     }
 
     // Tolak pembayaran — FK diverifikasi_oleh diisi
-    public function tolak($id, $alasan, $adminId) {
+    public function tolak($id, $alasan, $adminId)
+    {
         $stmt = $this->db->prepare(
             "UPDATE pembayaran 
              SET status_verifikasi = 'ditolak', 
@@ -69,14 +76,16 @@ class PembayaranModel {
     }
 
     // Update status_bayar di tabel pesanan (dp / lunas)
-    public function updateStatusBayarPesanan($pesananId, $statusBayar) {
+    public function updateStatusBayarPesanan($pesananId, $statusBayar)
+    {
         $stmt = $this->db->prepare("UPDATE pesanan SET status_bayar = ? WHERE id = ?");
         $stmt->bind_param("si", $statusBayar, $pesananId);
         return $stmt->execute();
     }
 
     // Simpan pelunasan COD oleh admin (juga FK diverifikasi_oleh)
-    public function simpanCod($pesananId, $jumlah, $tanggal, $catatan, $adminId = null) {
+    public function simpanCod($pesananId, $jumlah, $tanggal, $catatan, $adminId = null)
+    {
         $stmt = $this->db->prepare(
             "INSERT INTO pembayaran 
              (pesanan_id, file_bukti, tipe_bayar, tanggal_upload, status_verifikasi, 
@@ -88,7 +97,8 @@ class PembayaranModel {
     }
 
     // Kirim notifikasi ke admin
-    public function kirimNotifikasiAdmin($pesananId) {
+    public function kirimNotifikasiAdmin($pesananId)
+    {
         $pesan = "Pesanan #$pesananId menunggu verifikasi pembayaran.";
         $stmt  = $this->db->prepare(
             "INSERT INTO notifikasi (pesanan_id, pesan, dibaca, created_at) 

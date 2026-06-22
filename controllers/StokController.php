@@ -31,21 +31,26 @@ class StokController {
         }
 
         $nama_bahan   = trim($_POST['nama_bahan'] ?? '');
+        $kode_bahan   = trim($_POST['kode_bahan'] ?? '');
         $jumlah       = (int)($_POST['jumlah'] ?? 0);
         $satuan       = trim($_POST['satuan'] ?? '');
         $stok_minimum = (int)($_POST['stok_minimum'] ?? 5);
+        $diupdate_oleh = $_SESSION['admin_id'];
 
-        if (empty($nama_bahan)) {
-            $_SESSION['error'] = 'Nama bahan wajib diisi.';
-            header('Location: index.php?page=stok_tambah');
+        if (empty($nama_bahan) || empty($kode_bahan)) {
+            $_SESSION['error'] = 'Nama bahan dan kode bahan wajib diisi.';
+            header('Location: index.php?page=stok&action=tambah');
             exit;
         }
 
-        $diupdate_oleh = $_SESSION['admin_id']; // FK ke tabel admin
-        $hasil = $this->stokModel->simpan(compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum', 'diupdate_oleh'));
+        $hasil = $this->stokModel->simpan(
+            compact('nama_bahan', 'kode_bahan', 'jumlah', 'satuan', 'stok_minimum', 'diupdate_oleh')
+        );
+
         $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil
             ? 'Bahan berhasil ditambahkan.'
             : 'Gagal menambahkan bahan.';
+
         header('Location: index.php?page=stok');
         exit;
     }
@@ -70,15 +75,21 @@ class StokController {
 
         $id           = (int)($_POST['id'] ?? 0);
         $nama_bahan   = trim($_POST['nama_bahan'] ?? '');
+        $kode_bahan   = trim($_POST['kode_bahan'] ?? '');
         $jumlah       = (int)($_POST['jumlah'] ?? 0);
         $satuan       = trim($_POST['satuan'] ?? '');
         $stok_minimum = (int)($_POST['stok_minimum'] ?? 5);
+        $diupdate_oleh = $_SESSION['admin_id'];
 
-        $diupdate_oleh = $_SESSION['admin_id']; // FK ke tabel admin
-        $hasil = $this->stokModel->update($id, compact('nama_bahan', 'jumlah', 'satuan', 'stok_minimum', 'diupdate_oleh'));
+        $hasil = $this->stokModel->update(
+            $id,
+            compact('nama_bahan', 'kode_bahan', 'jumlah', 'satuan', 'stok_minimum', 'diupdate_oleh')
+        );
+
         $_SESSION[$hasil ? 'sukses' : 'error'] = $hasil
             ? 'Stok berhasil diperbarui.'
             : 'Gagal memperbarui stok.';
+
         header('Location: index.php?page=stok');
         exit;
     }

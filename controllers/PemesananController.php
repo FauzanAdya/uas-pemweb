@@ -2,16 +2,20 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/PesananModel.php';
 require_once __DIR__ . '/../models/KatalogModel.php';
+require_once __DIR__ . '/../models/StokModel.php';
 
 class PemesananController
 {
+
     private $pesananModel;
     private $katalogModel;
+    private $stokModel;
 
     public function __construct()
     {
         $this->pesananModel = new PesananModel();
         $this->katalogModel = new KatalogModel();
+        $this->stokModel    = new StokModel();
     }
 
     public function formPesan($produkId)
@@ -22,6 +26,8 @@ class PemesananController
             header('Location: index.php?page=katalog');
             exit;
         }
+
+        $stokBahan = $this->stokModel->getAll();
 
         require_once __DIR__ . '/../views/pelanggan/pesan_form.php';
     }
@@ -35,19 +41,14 @@ class PemesananController
     public function kalkulasiHarga()
     {
         header('Content-Type: application/json');
-
         $produkId    = (int)($_POST['produk_id'] ?? 0);
         $jumlah      = (int)($_POST['jumlah'] ?? 1);
         $isCustom    = (bool)($_POST['is_custom'] ?? false);
         $tambahanArr = $_POST['tambahan'] ?? [];
 
         $produk = $this->katalogModel->getById($produkId);
-
         if (!$produk) {
-            echo json_encode([
-                'sukses' => false,
-                'pesan'  => 'Produk tidak ditemukan.'
-            ]);
+            echo json_encode(['sukses' => false, 'pesan' => 'Produk tidak ditemukan.']);
             exit;
         }
 
@@ -55,31 +56,16 @@ class PemesananController
         $biayaCustom = 0;
 
         if ($isCustom) {
-            $biayaCustom += 15000;
-
+            $biayaCustom = 15000;
             foreach ($tambahanArr as $t) {
-                switch ($t) {
-                    case 'pita_premium':
-                        $biayaCustom += 5000;
-                        break;
-
-                    case 'bunga_segar':
-                        $biayaCustom += 20000;
-                        break;
-
-                    case 'coklat':
-                        $biayaCustom += 10000;
-                        break;
-
-                    case 'boneka':
-                        $biayaCustom += 25000;
-                        break;
-                }
+                if ($t === 'pita_premium') $biayaCustom += 5000;
+                if ($t === 'bunga_segar')  $biayaCustom += 20000;
+                if ($t === 'coklat')       $biayaCustom += 10000;
+                if ($t === 'boneka')       $biayaCustom += 25000;
             }
         }
 
         $total = $hargaDasar + $biayaCustom;
-
         echo json_encode([
             'sukses'      => true,
             'total'       => $total,
@@ -95,43 +81,20 @@ class PemesananController
             exit;
         }
 
-        $nama_pemesan  = trim($_POST['nama_pemesan'] ?? '');
-        $no_wa         = trim($_POST['no_wa'] ?? '');
-        $produk_id     = (int)($_POST['produk_id'] ?? 0);
-        $jumlah        = (int)($_POST['jumlah'] ?? 1);
-        $tanggal_ambil = trim($_POST['tanggal_ambil'] ?? '');
-        $ucapan        = trim($_POST['ucapan'] ?? '');
-        $is_custom     = (int)($_POST['is_custom'] ?? 0);
+        $nama_pemesan     = trim($_POST['nama_pemesan'] ?? '');
+        $no_wa            = trim($_POST['no_wa'] ?? '');
+        $produk_id        = (int)($_POST['produk_id'] ?? 0);
+        $jumlah           = (int)($_POST['jumlah'] ?? 1);
+        $tanggal_ambil    = trim($_POST['tanggal_ambil'] ?? '');
+        $ucapan           = trim($_POST['ucapan'] ?? '');
+        $is_custom        = (int)($_POST['is_custom'] ?? 0);
+        $warna_kertas     = trim($_POST['warna_kertas'] ?? '');
+        $jenis_isi        = trim($_POST['jenis_isi'] ?? '');
 
-        /*
-         * WARNA KERTAS
-         */
-        $warna_kertas = $_POST['warna_kertas'] ?? '';
-
-        if (is_array($warna_kertas)) {
-            $warna_kertas = implode(', ', $warna_kertas);
-        } else {
-            $warna_kertas = trim($warna_kertas);
-        }
-
-        /*
-         * JENIS ISI
-         */
-        $jenis_isi = $_POST['jenis_isi'] ?? '';
-
-        if (is_array($jenis_isi)) {
-            $jenis_isi = implode(', ', $jenis_isi);
-        } else {
-            $jenis_isi = trim($jenis_isi);
-        }
-
-        /*
-         * TAMBAHAN
-         */
+        // FIX ERROR ARRAY
         $tambahan = $_POST['tambahan'] ?? [];
-
         if (is_array($tambahan)) {
-            $tambahan = implode(', ', $tambahan);
+            $tambahan = json_encode($tambahan);
         } else {
             $tambahan = trim($tambahan);
         }
@@ -139,21 +102,9 @@ class PemesananController
         $total_harga      = (int)($_POST['total_harga'] ?? 0);
         $tipe_pengambilan = trim($_POST['tipe_pengambilan'] ?? 'ambil');
 
-        // Validasi
-        if (
-            empty($nama_pemesan) ||
-            empty($no_wa) ||
-            empty($produk_id) ||
-            empty($tanggal_ambil)
-        ) {
+        if (empty($nama_pemesan) || empty($no_wa) || !$produk_id || empty($tanggal_ambil)) {
             $_SESSION['error'] = 'Data pemesanan tidak lengkap.';
-
-            if ($is_custom) {
-                header('Location: index.php?page=custom');
-            } else {
-                header('Location: index.php?page=pesan&id=' . $produk_id);
-            }
-
+            header('Location: index.php?page=pesan&id=' . $produk_id);
             exit;
         }
 
@@ -170,28 +121,18 @@ class PemesananController
             'jenis_isi'        => $jenis_isi,
             'tambahan'         => $tambahan,
             'total_harga'      => $total_harga,
-            'tipe_pengambilan' => $tipe_pengambilan
+            'tipe_pengambilan' => $tipe_pengambilan,
         ];
 
         $pesananId = $this->pesananModel->simpan($data);
 
         if ($pesananId) {
-
             $_SESSION['pesanan_id'] = $pesananId;
-            $_SESSION['sukses'] = 'Pesanan berhasil dibuat.';
-
             header('Location: index.php?page=pembayaran_info&id=' . $pesananId);
-            exit;
-        }
-
-        $_SESSION['error'] = 'Gagal menyimpan pesanan.';
-
-        if ($is_custom) {
-            header('Location: index.php?page=custom');
         } else {
+            $_SESSION['error'] = 'Gagal menyimpan pesanan.';
             header('Location: index.php?page=pesan&id=' . $produk_id);
         }
-
         exit;
     }
 }

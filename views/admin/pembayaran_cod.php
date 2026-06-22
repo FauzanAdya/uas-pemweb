@@ -27,8 +27,8 @@
 
             <!-- Pilih Pesanan (jika tidak dari tombol spesifik) -->
             <?php
-             /** @var array $pesananBelumLunas */
-             if (!isset($pesanan)): ?>
+            /** @var array $pesananBelumLunas */ 
+            if (!isset($pesanan)): ?>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Pilih Pesanan</label>
                 <select name="pesanan_id" class="form-select" required id="selectPesanan" onchange="updateSisa(this)">
@@ -75,7 +75,7 @@
             </div>
 
             <button type="submit" class="btn w-100 fw-bold py-2 text-white" style="background:#3B4A1F">
-                 Tandai Lunas (COD)
+                Tandai Lunas (COD)
             </button>
         </form>
     </div>

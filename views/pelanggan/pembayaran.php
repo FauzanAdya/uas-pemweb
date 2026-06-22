@@ -26,7 +26,7 @@
         <div class="row g-2">
             <div class="col-6">
                 <div class="mode-card p-3 text-center selected" id="card-dp" onclick="pilihMode('dp')">
-                    <div style="font-size:1.8rem">💳</div>
+                    <div style="font-size:1.8rem"></div>
                     <div class="fw-bold mt-1">DP 50%</div>
                     <div class="text-muted small">Bayar setengah dulu</div>
                 </div>

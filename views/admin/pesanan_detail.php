@@ -1,13 +1,10 @@
-<?php
-/** @var array $pesanan */  
-require_once __DIR__ . '/../layouts/header.php';
-require_once __DIR__ . '/../layouts/sidebar.php'; 
-?>
+<?php require_once __DIR__ . '/../layouts/header.php'; ?>
+<?php require_once __DIR__ . '/../layouts/sidebar.php'; 
+/** @var array $pesanan */?>
 <div class="flex-grow-1 p-4">
     <a href="index.php?page=pesanan" class="btn btn-sm btn-outline-secondary mb-3">&larr; Kembali</a>
     <h4 class="fw-bold mb-4">Detail Pesanan #<?= $pesanan['id'] ?></h4>
-    <?php
-    if (!empty($_SESSION['sukses'])): ?>
+    <?php if (!empty($_SESSION['sukses'])): ?>
         <div class="alert alert-success"><?= $_SESSION['sukses']; unset($_SESSION['sukses']); ?></div>
     <?php endif; ?>
     <div class="row g-3">

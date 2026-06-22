@@ -4,27 +4,33 @@ require_once __DIR__ . '/../models/PembayaranModel.php';
 require_once __DIR__ . '/../models/PesananModel.php';
 require_once __DIR__ . '/../models/KeuanganModel.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
+require_once __DIR__ . '/../models/StokModel.php';
 
-class PembayaranController {
-
+class PembayaranController
+{
     private $pembayaranModel;
     private $pesananModel;
     private $keuanganModel;
+    private $stokModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->pembayaranModel = new PembayaranModel();
         $this->pesananModel    = new PesananModel();
         $this->keuanganModel   = new KeuanganModel();
+        $this->stokModel       = new StokModel();
     }
 
-    public function index() {
+    public function index()
+    {
         cekLogin();
         $pembayaran        = $this->pembayaranModel->getAllBelumVerifikasi();
         $pesananBelumLunas = $this->pesananModel->getPesananBelumLunas();
         require_once __DIR__ . '/../views/admin/pembayaran_list.php';
     }
 
-    public function verifikasi($id) {
+    public function verifikasi($id)
+    {
         cekLogin();
         $pembayaran = $this->pembayaranModel->getById($id);
         if (!$pembayaran) {
@@ -35,59 +41,87 @@ class PembayaranController {
         require_once __DIR__ . '/../views/admin/pembayaran_verifikasi.php';
     }
 
-    public function konfirmasi() {
+    public function konfirmasi()
+    {
         cekLogin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?page=pembayaran');
             exit;
         }
+
         $id         = (int)($_POST['id'] ?? 0);
         $pembayaran = $this->pembayaranModel->getById($id);
-        $hasil      = $this->pembayaranModel->konfirmasi($id, $_SESSION['admin_id']); // FK diverifikasi_oleh
+        $hasil      = $this->pembayaranModel->konfirmasi($id, $_SESSION['admin_id']);
 
         if ($hasil) {
             $isLunas = $pembayaran['tipe_bayar'] === 'lunas';
             $this->pesananModel->ubahStatus($pembayaran['pesanan_id'], 'diproses');
-            $this->pembayaranModel->updateStatusBayarPesanan($pembayaran['pesanan_id'], $isLunas ? 'lunas' : 'dp');
+            $this->pembayaranModel->updateStatusBayarPesanan(
+                $pembayaran['pesanan_id'],
+                $isLunas ? 'lunas' : 'dp'
+            );
+
+            // Kurangi stok OTOMATIS jika pesanan custom
+            if ($pembayaran['is_custom']) {
+                $kodeList = array_filter([
+                    $pembayaran['warna_kertas'] ?? '',
+                    $pembayaran['jenis_isi']    ?? '',
+                ]);
+
+                // Tambahan format JSON array ["coklat","boneka"]
+                if (!empty($pembayaran['tambahan'])) {
+                    $tambahanArr = json_decode($pembayaran['tambahan'], true);
+                    if (is_array($tambahanArr)) {
+                        foreach ($tambahanArr as $t) {
+                            $kodeList[] = trim($t);
+                        }
+                    }
+                }
+
+                // Cocokkan kode dengan kode_bahan lalu kurangi stok
+                $this->stokModel->kurangiOtomatisByKataKunci($kodeList, $_SESSION['admin_id']);
+            }
+
             $_SESSION['sukses'] = $isLunas
-                ? ' Pembayaran LUNAS dikonfirmasi.'
-                : ' Pembayaran DP dikonfirmasi. Sisa via COD saat pengambilan.';
+                ? 'Pembayaran LUNAS dikonfirmasi.'
+                : 'Pembayaran DP dikonfirmasi. Sisa via COD saat pengambilan.';
+
         } else {
             $_SESSION['error'] = 'Gagal mengkonfirmasi pembayaran.';
         }
+
         header('Location: index.php?page=pembayaran');
         exit;
     }
 
-    public function tolak() {
-    cekLogin();
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Location: index.php?page=pembayaran');
-        exit;
-    }
-    $id = (int)($_POST['id'] ?? 0);
-
-    
-    $pembayaran = $this->pembayaranModel->getById($id);
-
-    if ($pembayaran) {
-        
-        $hasil = $this->pesananModel->hapus($pembayaran['pesanan_id']);
-
-        if ($hasil) {
-            $_SESSION['sukses'] = 'Pembayaran ditolak. Pesanan telah dihapus dari sistem.';
-        } else {
-            $_SESSION['error'] = 'Gagal menghapus pesanan.';
+    public function tolak()
+    {
+        cekLogin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=pembayaran');
+            exit;
         }
-    } else {
-        $_SESSION['error'] = 'Data pembayaran tidak ditemukan.';
+
+        $id         = (int)($_POST['id'] ?? 0);
+        $pembayaran = $this->pembayaranModel->getById($id);
+
+        if ($pembayaran) {
+            $hasil = $this->pesananModel->hapus($pembayaran['pesanan_id']);
+            if ($hasil) {
+                $_SESSION['sukses'] = 'Pembayaran ditolak. Pesanan telah dihapus dari sistem.';
+            } else {
+                $_SESSION['error'] = 'Gagal menghapus pesanan.';
+            }
+        } else {
+            $_SESSION['error'] = 'Data pembayaran tidak ditemukan.';
+        }
+
+        header('Location: index.php?page=pembayaran');
+        exit;
     }
 
-    header('Location: index.php?page=pembayaran');
-    exit;
-    }
-
-    public function formCod() {
+    public function formCod()
+    {
         cekLogin();
         $pesananBelumLunas = $this->pesananModel->getPesananBelumLunas();
         $pesananId         = (int)($_GET['pesanan_id'] ?? 0);
@@ -95,12 +129,14 @@ class PembayaranController {
         require_once __DIR__ . '/../views/admin/pembayaran_cod.php';
     }
 
-    public function simpanCod() {
+    public function simpanCod()
+    {
         cekLogin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?page=pembayaran');
             exit;
         }
+
         $pesananId  = (int)($_POST['pesanan_id'] ?? 0);
         $jumlahCod  = (int)($_POST['jumlah_cod'] ?? 0);
         $tanggalCod = trim($_POST['tanggal_cod'] ?? date('Y-m-d'));
@@ -112,31 +148,35 @@ class PembayaranController {
             exit;
         }
 
-        $hasil = $this->pembayaranModel->simpanCod($pesananId, $jumlahCod, $tanggalCod, $catatan, $_SESSION['admin_id']);
+        $hasil = $this->pembayaranModel->simpanCod(
+            $pesananId, $jumlahCod, $tanggalCod, $catatan, $_SESSION['admin_id']
+        );
+
         if ($hasil) {
             $this->pembayaranModel->updateStatusBayarPesanan($pesananId, 'lunas');
             $this->pesananModel->ubahStatus($pesananId, 'selesai');
 
-            // Catat pemasukan ke tabel keuangan
             $pesanan = $this->pesananModel->getById($pesananId);
             $this->keuanganModel->simpanTransaksi([
                 'keterangan'   => 'Pesanan #' . $pesananId . ' - ' . $pesanan['nama_pemesan'] . ' (Lunas via COD)',
                 'jumlah'       => $pesanan['total_harga'],
                 'tipe'         => 'masuk',
                 'tanggal'      => $tanggalCod,
-                'pesanan_id'   => $pesananId,            // FK ke tabel pesanan
-                'dicatat_oleh' => $_SESSION['admin_id'], // FK ke tabel admin
+                'pesanan_id'   => $pesananId,
+                'dicatat_oleh' => $_SESSION['admin_id'],
             ]);
 
-            $_SESSION['sukses'] = ' Pelunasan COD berhasil dicatat. Pesanan ditandai Lunas & Selesai.';
+            $_SESSION['sukses'] = '✅ Pelunasan COD berhasil dicatat. Pesanan ditandai Lunas & Selesai.';
         } else {
             $_SESSION['error'] = 'Gagal mencatat pelunasan COD.';
         }
+
         header('Location: index.php?page=pembayaran');
         exit;
     }
 
-    public function uploadBukti() {
+    public function uploadBukti()
+    {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?page=katalog');
             exit;

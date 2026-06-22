@@ -2,9 +2,7 @@
 <?php require_once __DIR__ . '/../layouts/sidebar.php'; ?>
 <div class="flex-grow-1 p-4">
     <h4 class="fw-bold mb-4">Manajemen Pesanan</h4>
-    <?php
-    /** @var array $pesanan */  
-    if (!empty($_SESSION['sukses'])): ?>
+    <?php if (!empty($_SESSION['sukses'])): ?>
         <div class="alert alert-success"><?= $_SESSION['sukses']; unset($_SESSION['sukses']); ?></div>
     <?php endif; ?>
     <?php if (!empty($_SESSION['error'])): ?>
@@ -17,7 +15,9 @@
                     <tr><th>#</th><th>Nama</th><th>Produk</th><th>Tgl Pesan</th><th>Tgl Ambil</th><th>Total</th><th>Status Bayar</th><th>Status</th><th>Aksi</th></tr>
                 </thead>
                 <tbody>
-                <?php foreach ($pesanan as $i => $p): ?>
+                <?php
+                /** @var array $pesanan */ 
+                foreach ($pesanan as $i => $p): ?>
                 <tr>
                     <td><?= $i+1 ?></td>
                     <td><?= htmlspecialchars($p['nama_pemesan']) ?><br><small class="text-muted"><?= $p['no_wa'] ?></small></td>

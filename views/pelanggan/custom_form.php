@@ -1,6 +1,3 @@
-<?php
-$katalog = $katalog ?? [];
-?>
 <?php require_once __DIR__ . '/../../config/config.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -14,14 +11,16 @@ $katalog = $katalog ?? [];
 <nav class="navbar py-3 mb-4">
     <div class="container">
         <a href="index.php?page=katalog" class="text-white text-decoration-none">← Katalog</a>
-        <span class="text-white fw-bold"> Custom Buket</span>
+        <span class="text-white fw-bold">Custom Buket</span>
     </div>
 </nav>
 <div class="container pb-5" style="max-width:600px">
     <h5 class="fw-bold mb-4">Buat Buket Custom</h5>
     <p class="text-muted">Pilih produk dasar lalu sesuaikan sepenuhnya sesuai keinginanmu.</p>
     <div class="row g-3">
-    <?php foreach ($katalog as $k): ?>
+    <?php
+    /** @var array $katalog */ 
+    foreach ($katalog as $k): ?>
         <div class="col-md-6">
             <div class="card p-3 h-100">
                 <h6 class="fw-bold"><?= htmlspecialchars($k['nama']) ?></h6>

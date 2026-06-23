@@ -36,3 +36,9 @@
   kode: boneka | cocok: [{"id":13,"nama_bahan":"Boneka Kecil","kode_bahan":"boneka","jumlah":7,"satuan":"buah","stok_minimum":3,"diupdate_oleh":1,"updated_at":"2026-06-22 13:43:35"}]
   hasil berkurang: ["Kertas Wrap Putih","Boneka Kecil"]
 
+2026-06-23 14:25:23 | kodeList: ["biru","bunga_segar","pita_premium"]
+  kode: biru | cocok: [{"id":3,"nama_bahan":"Kertas Wrap Biru","kode_bahan":"biru","jumlah":10,"satuan":"lembar","stok_minimum":5,"diupdate_oleh":1,"updated_at":"2026-06-23 18:59:42"}]
+  kode: bunga_segar | cocok: [{"id":8,"nama_bahan":"Bunga Segar","kode_bahan":"bunga_segar","jumlah":20,"satuan":"buah","stok_minimum":10,"diupdate_oleh":1,"updated_at":"2026-06-23 18:59:42"}]
+  kode: pita_premium | cocok: [{"id":11,"nama_bahan":"Pita Satin Premium","kode_bahan":"pita_premium","jumlah":10,"satuan":"rol","stok_minimum":3,"diupdate_oleh":1,"updated_at":"2026-06-23 18:59:42"}]
+  hasil berkurang: ["Kertas Wrap Biru","Bunga Segar","Pita Satin Premium"]
+

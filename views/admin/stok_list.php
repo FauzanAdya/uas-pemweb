@@ -15,10 +15,11 @@
 
     <?php if (!empty($stokMenuipis)): ?>
     <div class="alert alert-warning">
-        <strong>⚠ Peringatan!</strong> Stok bahan berikut hampir habis:
+        <strong>⚠ Peringatan!</strong> Periksa ketersediaan stok bahan berikut:
         <?php foreach($stokMenuipis as $s): ?>
-            <span class="badge bg-warning text-dark ms-1">
-                <?= htmlspecialchars($s['nama_bahan']) ?> (<?= $s['jumlah'] ?> <?= $s['satuan'] ?>)
+            <span class="badge <?= $s['jumlah'] == 0 ? 'bg-dark' : 'bg-warning text-dark' ?> ms-1">
+                <?= htmlspecialchars($s['nama_bahan']) ?> 
+                (<?= $s['jumlah'] == 0 ? 'Habis' : $s['jumlah'] . ' ' . $s['satuan'] ?>)
             </span>
         <?php endforeach; ?>
     </div>
@@ -42,8 +43,16 @@
                 <tbody>
                 <?php
                 /** @var array $stok */ 
-                foreach ($stok as $i => $s): ?>
-                <tr class="<?= $s['jumlah'] <= $s['stok_minimum'] ? 'table-warning' : '' ?>">
+                foreach ($stok as $i => $s): 
+                    // Menentukan warna background baris tabel berdasarkan sisa stok
+                    $bg_class = '';
+                    if ($s['jumlah'] == 0) {
+                        $bg_class = 'table-danger'; // Merah jika habis total
+                    } elseif ($s['jumlah'] <= $s['stok_minimum']) {
+                        $bg_class = 'table-warning'; // Kuning jika menipis
+                    }
+                ?>
+                <tr class="<?= $bg_class ?>">
                     <td><?= $i+1 ?></td>
                     <td class="fw-semibold"><?= htmlspecialchars($s['nama_bahan']) ?></td>
                     <td><code><?= htmlspecialchars($s['kode_bahan'] ?? '-') ?></code></td>
@@ -51,7 +60,9 @@
                     <td><?= $s['satuan'] ?></td>
                     <td><?= $s['stok_minimum'] ?></td>
                     <td>
-                        <?php if ($s['jumlah'] <= $s['stok_minimum']): ?>
+                        <?php if ($s['jumlah'] == 0): ?>
+                            <span class="badge bg-dark">Habis</span>
+                        <?php elseif ($s['jumlah'] <= $s['stok_minimum']): ?>
                             <span class="badge bg-danger">Menipis</span>
                         <?php else: ?>
                             <span class="badge bg-success">Aman</span>
